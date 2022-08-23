@@ -25,12 +25,21 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Greetings';
-$string['greetinguser'] = 'Greetings, user.';
-$string['greetingloggedinuser'] = 'Greetings, {$a}.';
-$string['greetinguserau'] = 'Hello, {$a}.';
-$string['greetinguseres'] = 'Hola, {$a}.';
-$string['greetingusercat'] = 'Bon dia, {$a}.';
-$string['greetinguserfj'] = 'Bula, {$a}.';
-$string['greetingusernz'] = 'Kia Ora, {$a}.';
+function local_greetings_get_greeting($user) {
+    if ($user == null) {
+        return get_string('greetinguser', 'local_greetings');
+    }
 
+    $country = $user->country;
+
+    switch ($country) {
+        case 'ES':
+            $langstr = 'greetinguseres';
+            break;
+        default:
+            $langstr = 'greetingloggedinuser';
+            break;
+    }
+
+    return get_string($langstr, 'local_greetings', fullname($user));
+}

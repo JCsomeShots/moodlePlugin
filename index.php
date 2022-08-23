@@ -12,15 +12,20 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <https://www.gnu.org/licenses/>;.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Plugin strings are defined here.
+ *
  * @package     local_greetings
- * @copyright   2022 JuanCa JcSomeCodes Castillo <juancarlo.castillo20@gmail.com>
+ * @category    string
+ * @copyright   JcSomeShots <juancarlo.castillo20@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
+require_once($CFG->dirroot. '/local/greetings/lib.php');
+
 
 $context = context_system::instance();
 $PAGE->set_context($context);
@@ -35,9 +40,15 @@ echo $OUTPUT->header();
 // echo '<h2>Greetings, Juanca</h2>';
 
 if (isloggedin()) {
-    echo '<h2>Greetings, ' . fullname($USER) . '</h2>';
+    // echo '<h2>Greetings, ' . fullname($USER) . '</h2>';
+
+    // echo get_string('greetingloggedinuser', 'local_greetings', fullname($USER));
+
+    echo local_greetings_get_greeting($USER);
+
 } else {
-    echo '<h2>Greetings, user</h2>';
+    // echo '<h2>Greetings, user</h2>';
+    echo get_string('greetinguser', 'local_greetings');
 }
 
 echo $OUTPUT->footer();
