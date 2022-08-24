@@ -37,17 +37,12 @@ $PAGE->set_heading(get_string('pluginname', 'local_greetings'));
 
 
 echo $OUTPUT->header();
-// echo '<h2>Greetings, Juanca</h2>';
 
 if (isloggedin()) {
-    // echo '<h2>Greetings, ' . fullname($USER) . '</h2>';
-
-    // echo get_string('greetingloggedinuser', 'local_greetings', fullname($USER));
 
     echo local_greetings_get_greeting($USER);
 
 } else {
-    // echo '<h2>Greetings, user</h2>';
     echo get_string('greetinguser', 'local_greetings');
 }
 
