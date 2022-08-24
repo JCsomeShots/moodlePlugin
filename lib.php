@@ -25,6 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/** Create a personal greetings and check the country. */
 function local_greetings_get_greeting($user) {
     if ($user == null) {
         return get_string('greetinguser', 'local_greetings');

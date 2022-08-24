@@ -25,14 +25,23 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Greetings';
-$string['greetinguser'] = 'Greetings, user.';
-$string['greetingloggedinuser'] = 'Greetings, {$a}.';
-$string['greetinguserau'] = 'Hello, {$a}.';
-$string['greetinguseres'] = 'Hola, {$a}.';
-$string['greetingusercat'] = 'Bon dia, {$a}.';
-$string['greetinguserfj'] = 'Bula, {$a}.';
-$string['greetingusernz'] = 'Kia Ora, {$a}.';
+require_once($CFG->libdir . '/formslib.php');
 
+/** Create a personal form submit. */
+class local_greetings_message_form extends moodleform {
 
-$string['yourmessage'] = 'Escriba aquí su mensaje';
+    /**
+     * Define the form.
+     */
+    public function definition() {
+        $mform    = $this->_form; // Don't forget the underscore!
+
+        $mform->addElement('textarea', 'message', get_string('yourmessage', 'local_greetings'));
+        $mform->setType('message', PARAM_TEXT);
+
+        // Add a submit button to the form with the following code.
+        $submitlabel = get_string('submit');
+        $mform->addElement('submit', 'submitmessage', $submitlabel);
+    }
+
+}
