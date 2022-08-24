@@ -42,6 +42,18 @@ $messageform = new local_greetings_message_form();
 
 echo $OUTPUT->header();
 
+if ($data = $messageform->get_data()) {
+    $message = required_param('message', PARAM_TEXT);
+
+    if (!empty($message)) {
+        $record = new stdClass;
+        $record->message = $message;
+        $record->timecreated = time();
+
+        $DB->insert_record('local_greetings_messages', $record);
+    }
+}
+
 // Say hello to a user.
 if (isloggedin()) {
     echo local_greetings_get_greeting($USER);
@@ -50,10 +62,10 @@ if (isloggedin()) {
 }
 
 $messageform->display();
-if ($data = $messageform->get_data()) {
-    $message = required_param('message', PARAM_TEXT);
+$messages = $DB->get_records('local_greetings_messages');
 
-    echo $OUTPUT->heading($message, 4);
+foreach ($messages as $m) {
+    echo '<p>' . $m->message . ', ' . $m->timecreated . '</p>';
 }
 
 echo $OUTPUT->footer();
