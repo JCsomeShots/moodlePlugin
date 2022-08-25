@@ -54,7 +54,12 @@ $action = optional_param('action', '', PARAM_TEXT);
 if ($action == 'del') {
     $id = required_param('id', PARAM_TEXT);
 
-    $DB->delete_records('local_greetings_messages', array('id' => $id));
+    // Only proceed with deleting the message if the user has be required permission.
+    if ($deleteanypost) {
+        $params = array('id' => $id);
+
+        $DB->delete_records('local_greetings_messages', $params);
+    }
 }
 
 
@@ -108,7 +113,6 @@ if (has_capability('local/greetings:viewmessages', $context)) {
 
 
     echo $OUTPUT->box_start('card-columns');
-    
 
     foreach ($messages as $m) {
         echo html_writer::start_tag('div', array('class' => 'card'));
@@ -118,8 +122,8 @@ if (has_capability('local/greetings:viewmessages', $context)) {
         echo html_writer::start_tag('p', array('class' => 'card-text'));
         echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
         echo html_writer::end_tag('p');
-        
-        if (! $deleteanypost) {
+
+        if ( $deleteanypost) {
             echo html_writer::start_tag('p', array('class' => 'card-footer text-center'));
             echo html_writer::link(
                 new moodle_url(
@@ -131,8 +135,6 @@ if (has_capability('local/greetings:viewmessages', $context)) {
             echo html_writer::end_tag('p');
         }
 
-        
-        
         echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
     }
