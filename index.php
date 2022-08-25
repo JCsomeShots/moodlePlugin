@@ -37,6 +37,13 @@ $PAGE->set_heading(get_string('pluginname', 'local_greetings'));
 
 
 
+require_login();
+
+if (isguestuser()) {
+    throw new moodle_exception('noguest');
+}
+
+
 // Invoke a personal form.
 $messageform = new local_greetings_message_form();
 
@@ -79,7 +86,7 @@ echo $OUTPUT->box_start('card-columns');
 foreach ($messages as $m) {
     echo html_writer::start_tag('div', array('class' => 'card'));
     echo html_writer::start_tag('div', array('class' => 'card-body'));
-    echo html_writer::tag('p', $m->message, array('class' => 'card-text'));
+    echo html_writer::tag('p', format_text($m->message, FORMAT_PLAIN), array('class' => 'card-text'));
     echo html_writer::tag('p', get_string('postedby', 'local_greetings', $m->firstname), array('class' => 'card-text'));
     echo html_writer::start_tag('p', array('class' => 'card-text'));
     echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
