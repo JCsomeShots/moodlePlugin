@@ -36,20 +36,35 @@ $PAGE->set_title($SITE->fullname);
 $PAGE->set_heading(get_string('pluginname', 'local_greetings'));
 
 
-
 require_login();
 
 if (isguestuser()) {
     throw new moodle_exception('noguest');
 }
 
+// Add capability check in your plugin, allow to post a message.
+$allowpost = has_capability('local/greetings:postmessages', $context);
+
+// Add capability in your plugin, to delete any post.
+$deleteanypost = has_capability('local/greetings:deleteanymessage', $context);
+
+// The real action to delete a message.
+$action = optional_param('action', '', PARAM_TEXT);
+
+if ($action == 'del') {
+    $id = required_param('id', PARAM_TEXT);
+
+    $DB->delete_records('local_greetings_messages', array('id' => $id));
+}
+
 
 // Invoke a personal form.
 $messageform = new local_greetings_message_form();
 
-echo $OUTPUT->header();
 
 if ($data = $messageform->get_data()) {
+    require_capability('local/greetings:postmessages', $context);
+
     $message = required_param('message', PARAM_TEXT);
 
     if (!empty($message)) {
@@ -62,6 +77,8 @@ if ($data = $messageform->get_data()) {
     }
 }
 
+echo $OUTPUT->header();
+
 // Say hello to a user.
 if (isloggedin()) {
     echo local_greetings_get_greeting($USER);
@@ -69,33 +86,60 @@ if (isloggedin()) {
     echo get_string('greetinguser', 'local_greetings');
 }
 
-$messageform->display();
-
-$userfields = \core_user\fields::for_name()->with_identity($context);
-$userfieldssql = $userfields->get_sql('u');
-
-$sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
-          FROM {local_greetings_messages} m
-     LEFT JOIN {user} u ON u.id = m.userid
-      ORDER BY timecreated DESC";
-
-$messages = $DB->get_records_sql($sql);
-
-echo $OUTPUT->box_start('card-columns');
-
-foreach ($messages as $m) {
-    echo html_writer::start_tag('div', array('class' => 'card'));
-    echo html_writer::start_tag('div', array('class' => 'card-body'));
-    echo html_writer::tag('p', format_text($m->message, FORMAT_PLAIN), array('class' => 'card-text'));
-    echo html_writer::tag('p', get_string('postedby', 'local_greetings', $m->firstname), array('class' => 'card-text'));
-    echo html_writer::start_tag('p', array('class' => 'card-text'));
-    echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
-    echo html_writer::end_tag('p');
-    echo html_writer::end_tag('div');
-    echo html_writer::end_tag('div');
+// Check if the user has the relevant permission.
+if ($allowpost) {
+    $messageform->display();
 }
 
-echo $OUTPUT->box_end();
+
+if (has_capability('local/greetings:viewmessages', $context)) {
+
+    $userfields = \core_user\fields::for_name()->with_identity($context);
+    $userfieldssql = $userfields->get_sql('u');
+
+
+    // To check which user make a post.
+    $sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
+            FROM {local_greetings_messages} m
+        LEFT JOIN {user} u ON u.id = m.userid
+        ORDER BY timecreated DESC";
+
+    $messages = $DB->get_records_sql($sql);
+
+
+    echo $OUTPUT->box_start('card-columns');
+    
+
+    foreach ($messages as $m) {
+        echo html_writer::start_tag('div', array('class' => 'card'));
+        echo html_writer::start_tag('div', array('class' => 'card-body'));
+        echo html_writer::tag('p', format_text($m->message, FORMAT_PLAIN), array('class' => 'card-text'));
+        echo html_writer::tag('p', get_string('postedby', 'local_greetings', $m->firstname), array('class' => 'card-text'));
+        echo html_writer::start_tag('p', array('class' => 'card-text'));
+        echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
+        echo html_writer::end_tag('p');
+        
+        if (! $deleteanypost) {
+            echo html_writer::start_tag('p', array('class' => 'card-footer text-center'));
+            echo html_writer::link(
+                new moodle_url(
+                    '/local/greetings/index.php',
+                    array('action' => 'del', 'id' => $m->id)
+                ),
+                $OUTPUT->pix_icon('t/delete', '') . get_string('delete')
+            );
+            echo html_writer::end_tag('p');
+        }
+
+        
+        
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+    }
+
+    echo $OUTPUT->box_end();
+}
+
 
 echo $OUTPUT->footer();
 

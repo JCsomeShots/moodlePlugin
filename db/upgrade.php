@@ -32,9 +32,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_local_greetings_upgrade($oldversion) {
     global $DB;
-    $dbman = $DB->get_manager();
-    if ($oldversion < 2022082400) {
 
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2022082400) {
         // Define field userid to be added to local_greetings_messages.
         $table = new xmldb_table('local_greetings_messages');
         $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '1', 'timecreated');
