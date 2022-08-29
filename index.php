@@ -45,20 +45,35 @@ if (isguestuser()) {
 // Add capability check in your plugin, allow to post a message.
 $allowpost = has_capability('local/greetings:postmessages', $context);
 
+// Add capability in your plugin, to delete their own post.
+$deletepost = has_capability('local/greetings:deleteownmessage', $context);
+
 // Add capability in your plugin, to delete any post.
-$deleteanypost = has_capability('local/greetings:deleteanymessage', $context);
+$deleteanypost = has_capability('local/greetings:deleteanymessages', $context);
 
 // The real action to delete a message.
 $action = optional_param('action', '', PARAM_TEXT);
 
 if ($action == 'del') {
+    // Adding sesskey protection.
+    require_sesskey();
+
     $id = required_param('id', PARAM_TEXT);
 
     // Only proceed with deleting the message if the user has be required permission.
-    if ($deleteanypost) {
+    if ($deleteanypost || $deletepost ) {
         $params = array('id' => $id);
 
+        // Users without permission should only delete their own post.
+        // In the original code o referent code there is putting in a negative way !$deleteanypost. But I can run it like this.
+        if($deleteanypost) {
+            $params += ['userid' => $USER->id];
+        }
+
+        // TO DO: Confirm before deleting.
         $DB->delete_records('local_greetings_messages', $params);
+
+        redirect($PAGE->url);
     }
 }
 
@@ -123,12 +138,12 @@ if (has_capability('local/greetings:viewmessages', $context)) {
         echo html_writer::tag('small', userdate($m->timecreated), array('class' => 'text-muted'));
         echo html_writer::end_tag('p');
 
-        if ( $deleteanypost) {
+        if ( $deleteanypost  || ($deletepost && $m->userid == $USER->id)) {
             echo html_writer::start_tag('p', array('class' => 'card-footer text-center'));
             echo html_writer::link(
                 new moodle_url(
                     '/local/greetings/index.php',
-                    array('action' => 'del', 'id' => $m->id)
+                    array('action' => 'del', 'id' => $m->id , 'sesskey' => sesskey())
                 ),
                 $OUTPUT->pix_icon('t/delete', '') . get_string('delete')
             );

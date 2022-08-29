@@ -35,8 +35,15 @@ $capabilities = array(
         )
     ),
     'local/greetings:viewmessages' => array(
-        'riskbitmask' => RISK_SPAM,
+        // A'riskbitmask' => RISK_SPAM,.
         'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        )
+    ),
+    'local/greetings:deleteownmessage' => array(
+        'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'user' => CAP_ALLOW,
