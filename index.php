@@ -155,6 +155,17 @@ if (has_capability('local/greetings:viewmessages', $context)) {
                 $OUTPUT->pix_icon('t/delete', ''), array('role' => 'button', 'aria-label' => get_string('delete'), 'title' => get_string('delete'))
             );
 
+            // Who to include an Icon?
+            // echo html_writer::link(
+            //     new moodle_url(
+            //         '/local/greetings/index.php',
+            //         array('action' => 'update', 'id' => $m->id , 'sesskey' => sesskey())
+            //     ),
+                // Create a update icon.
+                // $OUTPUT->pix_icon('t/edit', '') . get_string('Edit')
+
+            //     $OUTPUT->pix_icon('edit', ''), array('role' => 'button', 'aria-label' => get_string('Edit'), 'title' => get_string('Edit'))
+            // );
             echo html_writer::end_tag('p');
         }
 
