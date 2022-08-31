@@ -27,22 +27,22 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
-/** Create a personal form submit. */
-class local_greetings_message_form extends moodleform {
+/** Accessible forms. Create a personal form submit. */
+class local_greetings_accessibility_message_form extends moodleform {
 
     /**
      * Define the form.
      */
-    public function definition() {
+    public function definition_accessible() {
         $mform    = $this->_form; // Don't forget the underscore!
 
-        $mform->addElement('textarea', 'message', get_string('yourmessage', 'local_greetings'));
-        $mform->setType('message', PARAM_TEXT);
+        // To create a textarea.
+        $mform->addElement('textarea', 'messageaccessible', get_string('yourmessageaccessible', 'local_greetings'));
+        $mform->setType('messageaccessible', PARAM_TEXT);
 
         // Add a submit button to the form with the following code.
-        $submitlabel = get_string('submit');
-        $mform->addElement('submit', 'submitmessage', $submitlabel);
+        $submit = get_string('submit');
+        $mform->addElement('submit', 'submitmessage', $submit);
     }
 
 }
-

@@ -32,8 +32,9 @@ defined('MOODLE_INTERNAL') || die();
  * @param navigation_node $frontpage Node representing the front page in the navigation tree.
  */
 function local_greetings_extend_navigation_frontpage(navigation_node $frontpage) {
-    if (get_config('local_greetings', 'showinnavigation')) {
+    if (!get_config('local_greetings', 'showinnavigation')) {
         if (isloggedin() && !isguestuser()) {
+            // Adds a Greetings link, with an icon and text, on the Frontpage menu.
             $frontpage->add(
                 get_string('pluginname', 'local_greetings'),
                 new moodle_url('/local/greetings/index.php'),
@@ -62,7 +63,7 @@ function local_greetings_extend_navigation(global_navigation $root) {
             new pix_icon('t/message', '')
         );
 
-        $node->showinflatnavigation = get_config('local_greetings', 'showinnavigation');
+        $node->showinflatnavigation = !get_config('local_greetings', 'showinnavigation');
 
         $root->add_node($node);
     }

@@ -26,6 +26,7 @@
 require_once('../../config.php');
 require_once($CFG->dirroot. '/local/greetings/lib.php');
 require_once($CFG->dirroot. '/local/greetings/message_form.php');
+// Rrequire_once($CFG->dirroot. '/local/greetings/message_accessible_form.php');.
 
 
 $context = context_system::instance();
@@ -80,6 +81,9 @@ if ($action == 'del') {
 
 // Invoke a personal form.
 $messageform = new local_greetings_message_form();
+
+// Invoke a personal accessible form.
+// A $messageformaccessible = new local_greetings_accessible_message_form();.
 
 
 if ($data = $messageform->get_data()) {
@@ -145,8 +149,23 @@ if (has_capability('local/greetings:viewmessages', $context)) {
                     '/local/greetings/index.php',
                     array('action' => 'del', 'id' => $m->id , 'sesskey' => sesskey())
                 ),
-                $OUTPUT->pix_icon('t/delete', '') . get_string('delete')
+                // The Output line is commented cause that show icon and text in not accessebility way.
+                // O$OUTPUT->pix_icon('t/delete', '') . get_string('delete').
+                
+                $OUTPUT->pix_icon('t/delete', ''), array('role' => 'button', 'aria-label' => get_string('delete'), 'title' => get_string('delete'))
             );
+
+            // Who to include an Icon?
+            // echo html_writer::link(
+            //     new moodle_url(
+            //         '/local/greetings/index.php',
+            //         array('action' => 'update', 'id' => $m->id , 'sesskey' => sesskey())
+            //     ),
+            //     // Create a update icon.
+            //     // $OUTPUT->pix_icon('t/refresh', '') . get_string('update').
+
+            //     $OUTPUT->pix_icon('', ''), array('role' => 'button', 'aria-label' => get_string('update'), 'title' => get_string('update'))
+            // );
             echo html_writer::end_tag('p');
         }
 
