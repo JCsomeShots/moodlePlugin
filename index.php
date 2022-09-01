@@ -26,8 +26,6 @@
 require_once('../../config.php');
 require_once($CFG->dirroot. '/local/greetings/lib.php');
 require_once($CFG->dirroot. '/local/greetings/message_form.php');
-// Rrequire_once($CFG->dirroot. '/local/greetings/message_accessible_form.php');.
-
 
 $context = context_system::instance();
 $PAGE->set_context($context);
@@ -151,21 +149,10 @@ if (has_capability('local/greetings:viewmessages', $context)) {
                 ),
                 // The Output line is commented cause that show icon and text in not accessebility way.
                 // O$OUTPUT->pix_icon('t/delete', '') . get_string('delete').
-                
+
                 $OUTPUT->pix_icon('t/delete', ''), array('role' => 'button', 'aria-label' => get_string('delete'), 'title' => get_string('delete'))
             );
 
-            // Who to include an Icon?
-            // echo html_writer::link(
-            //     new moodle_url(
-            //         '/local/greetings/index.php',
-            //         array('action' => 'update', 'id' => $m->id , 'sesskey' => sesskey())
-            //     ),
-                // Create a update icon.
-                // $OUTPUT->pix_icon('t/edit', '') . get_string('Edit')
-
-            //     $OUTPUT->pix_icon('edit', ''), array('role' => 'button', 'aria-label' => get_string('Edit'), 'title' => get_string('Edit'))
-            // );
             echo html_writer::end_tag('p');
         }
 
